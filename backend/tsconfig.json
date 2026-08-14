@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+
+    "module": "esnext",
+    "types": ["node"],
+
+    "moduleResolution": "bundler",
+
+    "outDir": "./dist",
+
+    "rootDir": ".",
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*":["src/*"]
+    },
+
+    "strict": true,
+
+    "esModuleInterop": true,
+
+    "forceConsistentCasingInFileNames": true,
+
+    "skipLibCheck": true,
+
+    "noImplicitAny": true,
+
+    "noUnusedLocals": true,
+
+    "noUnusedParameters": true,
+
+    "exactOptionalPropertyTypes": true,
+  },
+
+  "include": ["src","prisma"],
+}
