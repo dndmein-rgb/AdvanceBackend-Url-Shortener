@@ -5,9 +5,51 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model User{
+id    String   @id  @default(uuid())
+name   String
+email   String  @unique
+passwordHash    String
+createdAt       DateTime  @default(now())
+updatedAt       DateTime @updatedAt
+
+shortUrls    ShortUrl[]
+
+@@map("users")
+}
+
+model ShortUrl{
+id String @id  @default(uuid())
+originalUrl     String
+userId           String
+shortCode       String    @unique
+createdAt       DateTime  @default(now())
+updatedAt       DateTime  @updatedAt
+
+analytics        ClickAnalytics[]
+user      User    @relation(fields:[userId],references:[id],onDelete:Cascade)
+
+@@map("short_urls")
+}
+
+model ClickAnalytics{
+id       String   @id     @default(uuid())
+shortUrlId     String
+clickedAt       DateTime  @default(now())
+ipAddress        String?
+userAgent        String?
+referrer         String?
+country          String?
+
+shortUrl     ShortUrl  @relation(fields :[shortUrlId],references:[id],onDelete:Cascade)
+
+@@index([shortUrlId, clickedAt(sort: Desc)])
+@@map("click_analytics")
 }

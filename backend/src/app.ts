@@ -15,7 +15,8 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: env?.FRONTEND_URL,
+    origin: env.FRONTEND_URL,
+    credentials:true
   }),
 );
 app.use(cookieParser());
@@ -29,6 +30,8 @@ app.get("/health-check", (_req: Request, res: Response) => {
     },
   });
 });
+import authRouter from "@/modules/auth/auth.route.js"
 
+app.use("/api/v1/auth",authRouter)
 app.use(globalErrorHandler);
 

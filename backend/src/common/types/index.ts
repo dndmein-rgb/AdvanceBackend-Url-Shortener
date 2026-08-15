@@ -4,6 +4,6 @@ export interface ApiResponse<T>{
   data?: T,
   error?: {
     code: string,
-    detauls?:unknown
+    details?:unknown
   }
 }
