@@ -5,14 +5,19 @@ import { prisma } from "@/common/infrastructure/database";
 
 export class AuthRepository implements IAuthRepository {
   async createUser(data: RegisterUserType): Promise<User> {
-    return await prisma.user.create({
+    return prisma.user.create({
       data,
     });
   }
 
   async findUserByEmail(email: string): Promise<User | null> {
-    return await prisma.user.findUnique({
+    return prisma.user.findUnique({
       where: { email },
+    });
+  }
+  async findUserById(userId: string): Promise<User | null> {
+    return prisma.user.findUnique({
+      where: { id: userId },
     });
   }
 }

@@ -3,14 +3,13 @@ import helmet from "helmet";
 import { globalErrorHandler } from "./common/middleware/error.middleware";
 import { sendResponse } from "./common/utils/send-response";
 import cookieParser from "cookie-parser"
-import { requestLogger } from "./common/middleware/request-logger";
 import { env } from "./config/env";
 import cors from "cors"
 
 export const app = express();
 
 app.use(helmet());
-app.use(requestLogger)
+app.use(httpLogger)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -31,6 +30,7 @@ app.get("/health-check", (_req: Request, res: Response) => {
   });
 });
 import authRouter from "@/modules/auth/auth.route.js"
+import { httpLogger } from "./common/middleware/pino-logger";
 
 app.use("/api/v1/auth",authRouter)
 app.use(globalErrorHandler);

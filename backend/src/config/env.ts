@@ -1,4 +1,5 @@
 import "dotenv/config"
+import type { StringValue } from "ms";
 
 import { z } from "zod"
 
@@ -10,8 +11,8 @@ const envSchema = z.object({
   SALT_ROUNDS: z.coerce.number(),
   ACCESS_TOKEN_SECRET: z.string(),
   REFRESH_TOKEN_SECRET: z.string(),
-  ACCESS_TOKEN_EXPIRES_IN: z.string(),
-  REFRESH_TOKEN_EXPIRES_IN: z.string(),
+  ACCESS_TOKEN_EXPIRES_IN: z.custom<StringValue>(),
+  REFRESH_TOKEN_EXPIRES_IN: z.custom<StringValue>(),
 })
 
 export const env=envSchema.parse(process.env)
