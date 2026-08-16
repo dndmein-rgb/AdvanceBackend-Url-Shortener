@@ -10,11 +10,14 @@ export const validate =
   (req: Request, _res: Response, next: NextFunction): void => {
     const result = schema.safeParse(req[target]);
     if (!result.success) {
-      throw new AppError(
-        result.error.issues
-          .map(({ path, message }) => `${path.join(".")}:${message}`)
-          .join(","),
-        400,
+      next(
+        new AppError(
+          result.error.issues
+            .map(({ path, message }) => `${path.join(".")}:${message}`)
+            .join(","),
+          400,
+          { code: "VALIDATION_ERROR" },
+        ),
       );
     }
     switch (target) {
@@ -26,9 +29,9 @@ export const validate =
         req.params = result.data as ParamsDictionary;
         break;
 
-        case "query":
-          Object.assign(req.query, result.data);
-          break;
+      case "query":
+        Object.assign(req.query, result.data);
+        break;
     }
 
     next();

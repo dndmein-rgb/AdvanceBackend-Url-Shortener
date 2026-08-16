@@ -1,7 +1,7 @@
 import { User } from "@/generated/prisma/client";
 import { IAuthRepository } from "./auth.interface";
 import { RegisterUserType } from "./auth.type";
-import { prisma } from "@/common/infrastructure/database";
+import { prisma } from "@/infrastructure/database";
 
 export class AuthRepository implements IAuthRepository {
   async createUser(data: RegisterUserType): Promise<User> {

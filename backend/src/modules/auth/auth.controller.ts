@@ -24,7 +24,7 @@ export class AuthController {
     const { email, password } = req.body;
     const result = await authService.loginUserService({ email, password });
     setAuthCookie(res, result.refreshToken);
-    sendResponse(res, 201, {
+    sendResponse(res, 200, {
       success: true,
       message: "User loggedIn successfully",
       data: result,

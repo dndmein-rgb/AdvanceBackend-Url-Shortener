@@ -1,7 +1,7 @@
 import { app } from "./app.js";
-import { prisma } from "./common/infrastructure/database";
 import { env } from "./config/env.js";
 import { logger } from "./config/logger.js";
+import { prisma, pool } from "./infrastructure/database"; 
 
 const PORT = env.PORT;
 
@@ -9,13 +9,35 @@ const server = app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
 });
 
-const shutDown = async (signal: string) => {
-  logger.info(`${signal} received: closing HTTP server and DB pool...`);
+async function gracefulShutdown(signal: string) {
+  logger.info(`${signal} received. Starting graceful shutdown...`);
+
   server.close(async () => {
-    await prisma.$disconnect();
-    logger.info("Shutdown completed");
-    process.exit(0);
+    try {
+      await prisma.$disconnect();
+      await pool.end();
+      logger.info("Shutdown completed");
+      process.exit(0);
+    } catch (err) {
+      logger.error({ err }, "Error during shutdown");
+      process.exit(1);
+    }
   });
-};
-process.on("SIGTERM", () => shutDown("SIGTERM"));
-process.on("SIGINT", () => shutDown("SIGINT"));
+
+  setTimeout(() => {
+    logger.error("Forced shutdown after timeout");
+    process.exit(1);
+  }, 10_000).unref();
+}
+
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+
+process.on("unhandledRejection", (reason) => {
+  logger.error({ err: reason }, "Unhandled Rejection");
+});
+
+process.on("uncaughtException", (err) => {
+  logger.error({ err }, "Uncaught Exception");
+  gracefulShutdown("uncaughtException");
+});

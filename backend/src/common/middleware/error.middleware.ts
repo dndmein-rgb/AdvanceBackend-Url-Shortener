@@ -41,6 +41,7 @@ export function globalErrorHandler(
       success: false,
       status: error.status,
       message: error.message,
+      code:error.code
     });
   }
   logger.error({

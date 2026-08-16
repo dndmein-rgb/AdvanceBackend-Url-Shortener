@@ -1,21 +1,26 @@
 import express, { Request, Response } from "express";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+
 import { globalErrorHandler } from "./common/middleware/error.middleware";
+import { httpLogger } from "./common/middleware/pino-logger";
 import { sendResponse } from "./common/utils/send-response";
-import cookieParser from "cookie-parser"
 import { env } from "./config/env";
-import cors from "cors"
+
+
+import authRouter from "@/modules/auth/auth.route.js";
 
 export const app = express();
 
 app.use(helmet());
-app.use(httpLogger)
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }));
+app.use(httpLogger);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(
   cors({
     origin: env.FRONTEND_URL,
-    credentials:true
+    credentials: true,
   }),
 );
 app.use(cookieParser());
@@ -29,9 +34,6 @@ app.get("/health-check", (_req: Request, res: Response) => {
     },
   });
 });
-import authRouter from "@/modules/auth/auth.route.js"
-import { httpLogger } from "./common/middleware/pino-logger";
 
-app.use("/api/v1/auth",authRouter)
+app.use("/api/v1/auth", authRouter);
 app.use(globalErrorHandler);
-

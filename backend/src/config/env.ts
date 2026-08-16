@@ -11,8 +11,8 @@ const envSchema = z.object({
   SALT_ROUNDS: z.coerce.number(),
   ACCESS_TOKEN_SECRET: z.string(),
   REFRESH_TOKEN_SECRET: z.string(),
-  ACCESS_TOKEN_EXPIRES_IN: z.custom<StringValue>(),
-  REFRESH_TOKEN_EXPIRES_IN: z.custom<StringValue>(),
+  ACCESS_TOKEN_EXPIRES_IN: z.string().min(1) as z.ZodType<StringValue>,
+  REFRESH_TOKEN_EXPIRES_IN: z.string().min(1) as z.ZodType<StringValue>
 })
 
 export const env=envSchema.parse(process.env)
