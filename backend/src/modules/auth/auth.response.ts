@@ -1,4 +1,4 @@
-import { UserResponseType } from "./auth.type";
+import { UserResponseType } from "./auth.types";
 
 export const toUserResponse = (user: UserResponseType) => {
   return {

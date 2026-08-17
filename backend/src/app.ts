@@ -8,8 +8,8 @@ import { httpLogger } from "./common/middleware/pino-logger";
 import { sendResponse } from "./common/utils/send-response";
 import { env } from "./config/env";
 
-
 import authRouter from "@/modules/auth/auth.route.js";
+import urlRouter from "@/modules/url/url.route.js";
 
 export const app = express();
 
@@ -36,4 +36,5 @@ app.get("/health-check", (_req: Request, res: Response) => {
 });
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/url", urlRouter);
 app.use(globalErrorHandler);

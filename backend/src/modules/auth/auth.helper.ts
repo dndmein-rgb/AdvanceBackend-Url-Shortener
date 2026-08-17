@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { env } from "@/config/env";
-import { JwtPayloadType } from "./auth.type";
+import { JwtPayloadType } from "./auth.types";
 import { Response } from "express";
 import ms from "ms";
 import { AppError } from "@/common/errors/app-error";

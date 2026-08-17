@@ -1,5 +1,5 @@
 import { User } from "@/generated/prisma/client";
-import { RegisterUserType } from "./auth.type";
+import { RegisterUserType } from "./auth.types";
 
 export interface IAuthRepository{
   createUser(data: RegisterUserType): Promise<User>

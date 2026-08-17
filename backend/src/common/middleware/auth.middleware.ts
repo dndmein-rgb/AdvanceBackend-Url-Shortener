@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError } from "../errors/app-error";
 import { verifyAccessToken } from "@/modules/auth/auth.helper";
-import { JwtPayloadType } from "@/modules/auth/auth.type";
+import { JwtPayloadType } from "@/modules/auth/auth.types";
 import jwt from "jsonwebtoken";
 
 export const authenticate = (
