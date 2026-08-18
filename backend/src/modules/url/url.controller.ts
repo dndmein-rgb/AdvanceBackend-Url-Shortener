@@ -7,7 +7,7 @@ export class UrlController {
   createShortUrl = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user?.userId as string;
     const { originalUrl } = req.body;
-    const result =await urlService.createShortUrl({ originalUrl }, userId);
+    const result = await urlService.createShortUrl({ originalUrl }, userId);
     sendResponse(res, 201, {
       success: true,
       message: "Short Code Created Successfully",
@@ -15,11 +15,11 @@ export class UrlController {
     });
   });
 
-  redirectToOriginalUrl = asyncHandler(async(req: Request, res: Response) => {
-    const shortCode = req.params.shortCode as string
-    const originalUrl = await urlService.getOriginalUrlFromShortCode(shortCode)
-    res.redirect(302,originalUrl)
-  })
+  redirectToOriginalUrl = asyncHandler(async (req: Request, res: Response) => {
+    const shortCode = req.params.shortCode as string;
+    const originalUrl = await urlService.getOriginalUrlFromShortCode(shortCode);
+    res.redirect(302, originalUrl);
+  });
 }
 
-export const urlController=new UrlController()
+export const urlController = new UrlController();

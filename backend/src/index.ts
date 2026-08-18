@@ -1,7 +1,7 @@
 import { app } from "./app.js";
 import { env } from "./config/env.js";
 import { logger } from "./config/logger.js";
-import { prisma, pool } from "./infrastructure/database"; 
+import { prisma, pool, redis } from "./infrastructure/database";
 
 const PORT = env.PORT;
 
@@ -16,6 +16,7 @@ async function gracefulShutdown(signal: string) {
     try {
       await prisma.$disconnect();
       await pool.end();
+      await redis.quit();
       logger.info("Shutdown completed");
       process.exit(0);
     } catch (err) {

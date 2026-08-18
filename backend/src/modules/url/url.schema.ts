@@ -2,7 +2,9 @@ import z from "zod";
 
 export const urlSchema = z
   .object({
-    originalUrl: z.url(),
+    originalUrl: z.url({
+      protocol: /^https?$/,
+    }).max(2048, "URL is too long"),
   })
   .strict();
 

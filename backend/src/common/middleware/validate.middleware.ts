@@ -10,7 +10,7 @@ export const validate =
   (req: Request, _res: Response, next: NextFunction): void => {
     const result = schema.safeParse(req[target]);
     if (!result.success) {
-      next(
+     return  next(
         new AppError(
           result.error.issues
             .map(({ path, message }) => `${path.join(".")}:${message}`)
