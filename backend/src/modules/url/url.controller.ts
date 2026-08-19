@@ -20,6 +20,22 @@ export class UrlController {
     const originalUrl = await urlService.getOriginalUrlFromShortCode(shortCode);
     res.redirect(302, originalUrl);
   });
+
+  updateOriginalUrl = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user?.userId as string;
+    const updatedOriginalUrl = req.body.updatedOriginalUrl;
+    const shortCode = req.params.shortCode as string;
+
+    const result = await urlService.updateOriginalUrl(userId, shortCode, {
+      updatedOriginalUrl,
+    });
+
+    sendResponse(res, 201, {
+      success: true,
+      message: "Original URL updated successfully",
+      data: result,
+    });
+  });
 }
 
 export const urlController = new UrlController();

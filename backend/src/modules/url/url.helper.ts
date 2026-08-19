@@ -19,4 +19,7 @@ const SHORT_CODE_LENGTH = 7;
 export function generateShortCode(): string{
   return nanoid(SHORT_CODE_LENGTH)
 }
+export function generateShortUrlCacheKey(shortCode: string): string{
+  return `shortCode:${shortCode}`
+}
 

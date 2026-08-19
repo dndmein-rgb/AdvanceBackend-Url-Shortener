@@ -1,8 +1,11 @@
 import { AppError } from "@/common/errors/app-error";
-import { generateShortCode } from "./url.helper";
+import { generateShortCode, generateShortUrlCacheKey } from "./url.helper";
 import { IUrlRepository } from "./url.interface";
 import { UrlInputType } from "./url.schema";
 import { Prisma } from "@/generated/prisma/client";
+import { UpdateShortUrlType } from "./url.types";
+import { cacheService } from "./cache/cache.service";
+import { logger } from "@/config/logger";
 
 export class UrlService {
   constructor(private readonly urlRepo: IUrlRepository) {}
@@ -14,13 +17,13 @@ export class UrlService {
     ) {
       return false;
     }
-  
+
     const target = error.meta?.target;
-  
+
     if (Array.isArray(target)) {
       return target.includes("shortCode");
     }
-  
+
     return target === "shortCode";
   }
 
@@ -37,8 +40,9 @@ export class UrlService {
       } catch (error) {
         if (this.isShortCodeCollision(error)) {
           continue;
-          throw error;
         }
+
+        throw error;
       }
     }
     throw new AppError(
@@ -48,12 +52,55 @@ export class UrlService {
     );
   }
   async getOriginalUrlFromShortCode(shortCode: string) {
+    const key = generateShortUrlCacheKey(shortCode);
+    const cachedOriginalUrl = await cacheService.get<string>(key);
+    if (cachedOriginalUrl) {
+      logger.info({
+        event: "CACHE_HIT",
+        shortCode,
+      });
+      return cachedOriginalUrl;
+    }
+
+    logger.info({
+      event: "CACHE_MISS",
+      shortCode,
+    });
     const shortUrl = await this.urlRepo.findShortUrlByShortCode(shortCode);
     if (!shortUrl) {
       throw new AppError("Short url not found", 404, {
         code: "SHORT_URL_NOT_FOUND",
       });
     }
+    await cacheService.set(key, shortUrl.originalUrl, 300);
     return shortUrl.originalUrl;
+  }
+
+  async updateOriginalUrl(
+    userId: string,
+    shortCode: string,
+    data: UpdateShortUrlType,
+  ) {
+    const shortUrl = await this.urlRepo.findShortUrlByShortCode(shortCode);
+    if (!shortUrl) {
+      throw new AppError("Short url not found", 404, {
+        code: "SHORT_URL_NOT_FOUND",
+      });
+    }
+    if (shortUrl.userId !== userId) {
+      throw new AppError("You are not allowed to perform this action", 403, {
+        code: "UNAUTHENTICATED",
+      });
+    }
+    const updatedShortUrl = await this.urlRepo.updateShortUrl(shortCode, data);
+    if (!updatedShortUrl) {
+      throw new AppError("Could not update short Url", 500, {
+        code: "SHORT_URL_NOT_UPDATED",
+      });
+    }
+    const key = generateShortUrlCacheKey(updatedShortUrl.shortCode);
+    await cacheService.set(key, updatedShortUrl.originalUrl, 300);
+
+    return updatedShortUrl;
   }
 }

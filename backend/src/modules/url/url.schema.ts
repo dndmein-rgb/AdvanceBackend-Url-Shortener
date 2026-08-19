@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const urlSchema = z
+export const createUrlSchema = z
   .object({
     originalUrl: z.url({
       protocol: /^https?$/,
@@ -8,4 +8,9 @@ export const urlSchema = z
   })
   .strict();
 
-export type UrlInputType = z.infer<typeof urlSchema>;
+export const updateUrlSchema = z.object({
+  updatedOriginalUrl:z.string()
+}).strict()
+
+export type UrlInputType = z.infer<typeof createUrlSchema>;
+export type UpdateUrlInputType = z.infer<typeof updateUrlSchema>;
