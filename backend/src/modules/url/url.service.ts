@@ -3,7 +3,7 @@ import { generateShortCode, generateShortUrlCacheKey } from "./url.helper";
 import { IUrlRepository } from "./url.interface";
 import { UrlInputType } from "./url.schema";
 import { Prisma } from "@/generated/prisma/client";
-import { UpdateShortUrlType } from "./url.types";
+import { ShortUrlType, UpdateShortUrlType } from "./url.types";
 import { cacheService } from "./cache/cache.service";
 import { logger } from "@/config/logger";
 
@@ -51,15 +51,15 @@ export class UrlService {
       { code: "SHORT_CODE_GENERATTION_FAILED" },
     );
   }
-  async getOriginalUrlFromShortCode(shortCode: string) {
+  async getShortUrlFromShortCode(shortCode: string) {
     const key = generateShortUrlCacheKey(shortCode);
-    const cachedOriginalUrl = await cacheService.get<string>(key);
-    if (cachedOriginalUrl) {
+    const cachedShortUrl = await cacheService.get<ShortUrlType>(key);
+    if (cachedShortUrl) {
       logger.info({
         event: "CACHE_HIT",
         shortCode,
       });
-      return cachedOriginalUrl;
+      return cachedShortUrl;
     }
 
     logger.info({
@@ -72,8 +72,8 @@ export class UrlService {
         code: "SHORT_URL_NOT_FOUND",
       });
     }
-    await cacheService.set(key, shortUrl.originalUrl, 300);
-    return shortUrl.originalUrl;
+    await cacheService.set(key, shortUrl, 300);
+    return shortUrl;
   }
 
   async updateOriginalUrl(

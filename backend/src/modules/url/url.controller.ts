@@ -2,6 +2,7 @@ import { asyncHandler } from "@/common/middleware/async-handler";
 import { Request, Response } from "express";
 import { urlService } from "./url.container";
 import { sendResponse } from "@/common/utils/send-response";
+import { analyticsService } from "../analytics/analytics.container";
 
 export class UrlController {
   createShortUrl = asyncHandler(async (req: Request, res: Response) => {
@@ -17,8 +18,11 @@ export class UrlController {
 
   redirectToOriginalUrl = asyncHandler(async (req: Request, res: Response) => {
     const shortCode = req.params.shortCode as string;
-    const originalUrl = await urlService.getOriginalUrlFromShortCode(shortCode);
-    res.redirect(302, originalUrl);
+    const shortUrl = await urlService.getShortUrlFromShortCode(shortCode);
+    await analyticsService.recordClick(shortUrl, req)
+
+    res.redirect(302, shortUrl.originalUrl)
+    
   });
 
   updateOriginalUrl = asyncHandler(async (req: Request, res: Response) => {
