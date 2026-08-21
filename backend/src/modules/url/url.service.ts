@@ -89,7 +89,7 @@ export class UrlService {
     }
     if (shortUrl.userId !== userId) {
       throw new AppError("You are not allowed to perform this action", 403, {
-        code: "UNAUTHENTICATED",
+        code: "FORBIDDEN",
       });
     }
     const updatedShortUrl = await this.urlRepo.updateShortUrl(shortCode, data);
@@ -99,7 +99,7 @@ export class UrlService {
       });
     }
     const key = generateShortUrlCacheKey(updatedShortUrl.shortCode);
-    await cacheService.set(key, updatedShortUrl.originalUrl, 300);
+    await cacheService.set(key, updatedShortUrl, 300);
 
     return updatedShortUrl;
   }

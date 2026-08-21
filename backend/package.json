@@ -8,7 +8,8 @@
     "build": "tsc && tsc-alias",
     "start": "node dist/index.js",
     "db:generate": "npx prisma generate",
-    "db:migrate": "npx prisma migrate dev --name init"
+    "db:migrate": "npx prisma migrate dev --name init",
+    "dev-worker":"tsx watch src/worker/index.js"
   },
   "keywords": [],
   "author": "",
@@ -31,6 +32,7 @@
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
     "bcrypt": "^6.0.0",
+    "bullmq": "^6.2.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",

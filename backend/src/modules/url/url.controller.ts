@@ -2,7 +2,8 @@ import { asyncHandler } from "@/common/middleware/async-handler";
 import { Request, Response } from "express";
 import { urlService } from "./url.container";
 import { sendResponse } from "@/common/utils/send-response";
-import { analyticsService } from "../analytics/analytics.container";
+import { analyticsQueue } from "@/infrastructure/queue/analytics.queue";
+import { logger } from "@/config/logger";
 
 export class UrlController {
   createShortUrl = asyncHandler(async (req: Request, res: Response) => {
@@ -19,7 +20,19 @@ export class UrlController {
   redirectToOriginalUrl = asyncHandler(async (req: Request, res: Response) => {
     const shortCode = req.params.shortCode as string;
     const shortUrl = await urlService.getShortUrlFromShortCode(shortCode);
-    await analyticsService.recordClick(shortUrl, req)
+    try {
+      await analyticsQueue.add("record-click", {
+        shortUrlId: shortUrl.id,
+        ipAddress: req.ip ?? null,
+        userAgent: typeof req.headers["user-agent"] === "string"
+          ? req.headers["user-agent"]
+          : null,
+        referrer: req.get("Referer") ?? null,
+        clickedAt: new Date().toISOString()
+      })
+    } catch (err) {
+      logger.error({ err, shortUrlId: shortUrl.id }, "Failed to enqueue analytics");
+    }
 
     res.redirect(302, shortUrl.originalUrl)
     

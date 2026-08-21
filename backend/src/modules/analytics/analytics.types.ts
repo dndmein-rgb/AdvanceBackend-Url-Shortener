@@ -6,3 +6,17 @@ export type CreateAnalyticsType = {
   referrer: string | null;
   country: string | null;
 };
+
+export type RecordClickInputType = {
+  shortUrlId: string;
+  ipAddress: string | null;
+  userAgent: string | null;
+  referrer: string | null;
+  clickedAt:Date
+};
+
+export type RequestMetaDataType = {
+  ipAddress: string;
+  userAgent: string;
+  referrer: string;
+};
