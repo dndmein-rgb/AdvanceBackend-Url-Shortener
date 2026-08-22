@@ -1,7 +1,7 @@
 import { UrlRepository } from "./url.repository";
 import { UrlService } from "./url.service";
 
-const urlRespository = new UrlRepository();
-const urlService = new UrlService(urlRespository)
+const urlRepository = new UrlRepository();
+const urlService = new UrlService(urlRepository);
 
-export {urlService}
+export { urlService };

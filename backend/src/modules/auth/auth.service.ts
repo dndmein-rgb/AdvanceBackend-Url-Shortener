@@ -37,7 +37,7 @@ export class AuthService {
   async loginUserService(data: LoginUserInputType) {
     const user = await this.authRepo.findUserByEmail(data.email);
     if (!user) {
-      throw new AppError("User not found", 404);
+      throw new AppError("Invalid email or password", 401);
     }
 
     const isPasswordValid = await comparePassword(
@@ -45,7 +45,7 @@ export class AuthService {
       user.passwordHash,
     );
     if (!isPasswordValid) {
-      throw new AppError("Invalid credentials", 401);
+      throw new AppError("Invalid email or password", 401);
     }
     const accessToken = signAccessToken({ userId: user.id });
     const refreshToken = signRefreshToken({ userId: user.id });

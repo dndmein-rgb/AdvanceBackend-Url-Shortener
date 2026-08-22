@@ -48,7 +48,7 @@ export class UrlService {
     throw new AppError(
       "Failed to generate a unique short code. Please try again.",
       500,
-      { code: "SHORT_CODE_GENERATTION_FAILED" },
+      { code: "SHORT_CODE_GENERATION_FAILED" },
     );
   }
   async getShortUrlFromShortCode(shortCode: string) {

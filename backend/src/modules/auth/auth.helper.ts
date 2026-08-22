@@ -34,11 +34,11 @@ export const signRefreshToken = (payload: JwtPayloadType) => {
 };
 
 export const verifyAccessToken = (token: string) => {
-  return jwt.verify(token, env.ACCESS_TOKEN_SECRET);
+  return jwt.verify(token, env.ACCESS_TOKEN_SECRET, { algorithms: ["HS256"] });
 };
 
 export const refreshAccessToken = (token: string) => {
-  return jwt.verify(token, env.REFRESH_TOKEN_SECRET);
+  return jwt.verify(token, env.REFRESH_TOKEN_SECRET, { algorithms: ["HS256"] });
 };
 
 export const setAuthCookie = (res: Response, refreshToken: string) => {
@@ -46,8 +46,7 @@ export const setAuthCookie = (res: Response, refreshToken: string) => {
     httpOnly: true,
     secure: env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: refreshTokenMaxAge
-    
+    maxAge: refreshTokenMaxAge,
   });
 };
 
@@ -56,5 +55,5 @@ export const clearAuthCookie = (res: Response) => {
     httpOnly: true,
     secure: env.NODE_ENV === "production",
     sameSite: "lax",
-  })
-}
+  });
+};

@@ -10,8 +10,11 @@ import { env } from "./config/env";
 
 import authRouter from "@/modules/auth/auth.route.js";
 import urlRouter from "@/modules/url/url.route.js";
+import { globalRateLimiter } from "./common/middleware/rate-limit/rate-limiter";
 
 export const app = express();
+app.set("trust proxy", 1);
+app.disable("x-powered-by");
 
 app.use(helmet());
 app.use(httpLogger);
@@ -24,6 +27,8 @@ app.use(
   }),
 );
 app.use(cookieParser());
+
+app.use(globalRateLimiter)
 
 app.get("/health-check", (_req: Request, res: Response) => {
   sendResponse(res, 200, {
